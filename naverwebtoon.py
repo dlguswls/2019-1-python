@@ -1,19 +1,23 @@
-from __future__ import unicode_literals
-import os
 import requests
 from bs4 import BeautifulSoup
 
-
-r = requests.get(episode_url)
+r = requests.get("https://comic.naver.com/webtoon/weekdayList.nhn?week=mon")
 soup = BeautifulSoup(r.text, 'html.parser')
 
-comic_title = ' '.join(soup.select('.list_area daily_img a[class*=img_list')
-ep_title = ' '.join(soup.select('.title a[class*=nclk_v2')
-comic_score = ' '.join(soup.select('.vote_lst a[class*=nclk_v2')
+comics = soup.select('.list_area daily_img > ul >li')
+titlelist = []
+linklist = []
+scorelist = []
+episodelist = []
 
-for comic,episode,score in zip(comic_title , ep_title, comic_score):
-    c = ''.join(comic)
-    e = ''.join(episode)
-    s = ''.join(score)
-
-print("{}/{}/{}",format(c,e,s))
+for x in comics:
+    title = x.find('a').get('title')
+    for y in title:
+        ep_title = y.select('.title a[class*=nclk_v2]')
+        episodelist.append(ep_title)
+    link = x.find('a').get('herf')
+    score = x.find('.rating_type > span > strong')
+    titlelist.append(title)
+    linklist.append(link)
+    scorelist.append(score)
+print(titlelist,linklist,scorelist,episodelist)
